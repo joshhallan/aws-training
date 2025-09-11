@@ -1,0 +1,13 @@
+export interface Note {
+    pk: string;
+    sk: string;
+    id: string;
+    title: string;
+    content: string;
+    entityType: 'Contact' | 'Lead' | 'Opportunity' | 'Account';
+    isPrivate?: boolean;
+    customerId: string;
+    created: string;
+    updated: string;
+    type: 'NOTE';
+}

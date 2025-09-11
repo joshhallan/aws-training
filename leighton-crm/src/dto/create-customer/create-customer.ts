@@ -1,5 +1,5 @@
 export interface CreateCustomer {
-  customerID: string;
+  customerId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -13,8 +13,4 @@ export interface CreateCustomer {
     postalCode?: string;
     country?: string;
   };
-
-  created: string;
-  updated: string;
-  type: 'CUSTOMER';
 }

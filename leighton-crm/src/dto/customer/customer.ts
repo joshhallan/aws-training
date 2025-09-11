@@ -14,11 +14,11 @@ export interface Customer {
     street?: string;
     city?: string;
     state?: string;
-    postalCode: string;
+    postalCode?: string;
     country?: string;
   };
 
   created: string;
   updated: string;
-  type: "CUSTOMER";
+  type: 'CUSTOMER';
 }

@@ -1,23 +1,23 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
-import { marshall } from "@aws-sdk/util-dynamodb";
-import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { randomUUID } from "node:crypto";
-import { CreateCustomer } from "../../dto/create-customer/create-customer";
-import { Customer } from "../../dto/customer/customer";
+import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { randomUUID } from 'node:crypto';
+import { CreateCustomer } from '../../dto/create-customer/create-customer';
+import { Customer } from '../../dto/customer/customer';
 
 const client = new DynamoDBClient();
 
 export const handler = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   try {
     if (!event.body) {
-      throw new Error("No payload body");
+      throw new Error('No payload body');
     }
 
     const newCustomer = JSON.parse(event.body) as CreateCustomer;
 
-    const id = randomUUID;
+    const id = randomUUID();
     const currentDate = new Date().toISOString();
 
     const newItem: Customer = {
@@ -26,11 +26,12 @@ export const handler = async (
       sk: `CUSTOMER#${id}`,
       created: currentDate,
       updated: currentDate,
-      type: "CUSTOMER",
+      type: 'CUSTOMER',
+      customerId: id
     };
 
     const putCommand = new PutItemCommand({
-      TableName: "leighton-crm-table",
+      TableName: 'leighton-crm-table',
       Item: marshall(newItem, {
         removeUndefinedValues: true,
       }),
@@ -43,12 +44,12 @@ export const handler = async (
       body: JSON.stringify(newCustomer),
     };
   } catch (error) {
-    let errorMessage = "Unknown error";
+    let errorMessage = 'Unknown error';
     if (error instanceof Error) {
       errorMessage = error.message;
     }
 
-    console.log(error);
+    console.error(error);
 
     return {
       statusCode: 500,
