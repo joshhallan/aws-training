@@ -6,6 +6,7 @@ import * as nodeLambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 import * as path from "node:path";
+import * as s3 from "aws-cdk-lib/aws-s3";
 
 export class LeightonCrmStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -23,6 +24,14 @@ export class LeightonCrmStack extends cdk.Stack {
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       tableName: "leighton-crm-table",
+    });
+
+    // we create the new s3 bucket for storing file objects
+    const bucket = new s3.Bucket(this, "FileBucket", {
+      bucketName: "leighton-crm-bucket-ja",
+      autoDeleteObjects: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      enforceSSL: true,
     });
 
     // we add a GSI to support querying all customers by type
@@ -165,6 +174,9 @@ export class LeightonCrmStack extends cdk.Stack {
     table.grantWriteData(deleteCustomerLambda);
     table.grantReadData(getAllCustomersLambda);
     table.grantWriteData(createCustomerNoteLambda);
+
+    // allow the Lambda function to put objects and generate presigned urls
+    bucket.grantWrite(createCustomerNoteLambda);
 
     // add the API for communicating with our CRM system
     const api = new apigw.RestApi(this, "Api", {

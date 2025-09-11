@@ -3,9 +3,9 @@ export const schema = {
   title: 'Customer',
   type: 'object',
   properties: {
-    // customerId: {
-    //   type: 'string',
-    // },
+    customerId: {
+      type: 'string',
+    },
     firstName: {
       type: 'string',
     },

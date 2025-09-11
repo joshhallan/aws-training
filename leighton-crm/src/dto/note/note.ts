@@ -10,4 +10,6 @@ export interface Note {
     created: string;
     updated: string;
     type: 'NOTE';
+    attachmentKey?: string;
+    filename?: string;
 }
