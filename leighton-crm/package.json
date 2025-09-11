@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.152",
+    "@types/http-errors": "^2.0.5",
     "@types/jest": "^29.5.14",
     "@types/node": "22.7.9",
     "aws-cdk": "2.1025.0",
@@ -21,9 +22,17 @@
     "typescript": "~5.6.3"
   },
   "dependencies": {
+    "@aws-lambda-powertools/logger": "^2.26.0",
+    "@aws-lambda-powertools/metrics": "^2.26.0",
+    "@aws-lambda-powertools/tracer": "^2.26.0",
     "@aws-sdk/client-dynamodb": "^3.873.0",
     "@aws-sdk/util-dynamodb": "^3.873.0",
+    "@middy/core": "^6.4.5",
+    "@middy/http-error-handler": "^6.4.5",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "aws-cdk-lib": "2.208.0",
-    "constructs": "^10.0.0"
+    "constructs": "^10.0.0",
+    "http-errors": "^2.0.0"
   }
 }
