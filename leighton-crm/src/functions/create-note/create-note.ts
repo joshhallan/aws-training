@@ -20,6 +20,14 @@ import { logger } from '../../shared/logger/logger';
 import { schemaValidator } from '../../shared/schema-validator/schema-validator';
 import { schema } from './create-note-schema';
 
+import {
+  BedrockRuntimeClient,
+  ConversationRole,
+  ConverseCommand,
+  ConverseCommandInput,
+  ConverseCommandOutput,
+} from '@aws-sdk/client-bedrock-runtime';
+
 // remember that the bucket name needs to be unique across all of AWS
 const BUCKET_NAME = 'leighton-crm-bucket-ja';
 
@@ -31,6 +39,7 @@ const metrics = new Metrics({
 
 const s3 = new S3Client();
 const client = new DynamoDBClient();
+const bedrockClient = new BedrockRuntimeClient({});
 
 export const createNoteHandler = async (
   event: APIGatewayProxyEvent,
@@ -53,7 +62,6 @@ export const createNoteHandler = async (
     const id = randomUUID();
     const currentDate = new Date().toISOString();
 
-    // if a filename property exists, we know the consumer wants to upload a file
     if (newNote.filename) {
       attachmentKey = `notes/${customerId}/attachments/${id}/${newNote.filename}`;
       const command = new PutObjectCommand({
@@ -62,9 +70,33 @@ export const createNoteHandler = async (
         ContentType: 'application/octet-stream',
       });
 
-      // we allow the upload URL to be used for 5 minutes
       uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
     }
+
+    // we generate an AI summary of the notes using a user prompt
+    const input: ConverseCommandInput = {
+      modelId: 'anthropic.claude-3-haiku-20240307-v1:0',
+      messages: [
+        {
+          role: ConversationRole.USER,
+          content: [
+            {
+              text: `Summarise the following text with around 5-8 concise key non-technical bullet points, that need to be known for a CRM solution: ${newNote.content}`,
+            },
+          ],
+        },
+      ],
+      inferenceConfig: {
+        maxTokens: 500,
+        temperature: 0.9,
+        topP: 0.9,
+      },
+    };
+
+    const command = new ConverseCommand(input);
+    const response: ConverseCommandOutput = await bedrockClient.send(command);
+
+    const summary = (response.output?.message?.content as any[])[0]?.text || '';
 
     const newItem: Note = {
       ...newNote,
@@ -75,7 +107,8 @@ export const createNoteHandler = async (
       type: 'NOTE',
       customerId: customerId,
       id: id,
-      attachmentKey: attachmentKey, // we save the key for where the document lives in S3
+      attachmentKey: attachmentKey,
+      summary: summary, // we store the AI generated summary
     };
 
     const putCommand = new PutItemCommand({
@@ -93,7 +126,7 @@ export const createNoteHandler = async (
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ ...newNote, id, uploadUrl }), // we return the upload url in the response
+      body: JSON.stringify({ ...newNote, id, uploadUrl, summary }),
     };
   } catch (error) {
     let errorMessage = 'Unknown error';

@@ -12,4 +12,5 @@ export interface Note {
     type: 'NOTE';
     attachmentKey?: string;
     filename?: string;
+    summary: string;
 }
