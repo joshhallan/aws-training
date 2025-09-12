@@ -25,7 +25,7 @@ const s3 = new S3Client();
 const dynamo = new DynamoDBClient();
 
 // remember that the bucket name needs to be unique across all of AWS
-const BUCKET_NAME = 'leighton-crm-bucket';
+const BUCKET_NAME = 'leighton-crm-bucket-ja';
 
 export const getNoteAttachmentHandler = async (
   event: APIGatewayProxyEvent,

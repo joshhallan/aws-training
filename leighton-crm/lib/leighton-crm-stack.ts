@@ -30,7 +30,7 @@ export class LeightonCrmStack extends cdk.Stack {
 
     // we create the new s3 bucket for storing file objects
     const bucket = new s3.Bucket(this, 'FileBucket', {
-      bucketName: 'leighton-crm-bucket',
+      bucketName: 'leighton-crm-bucket-ja',
       autoDeleteObjects: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       enforceSSL: true,
