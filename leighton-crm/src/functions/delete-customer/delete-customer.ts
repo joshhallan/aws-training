@@ -16,8 +16,8 @@ export const handler = async (
     const deleteCommand = new DeleteItemCommand({
       TableName: "leighton-crm-table",
       Key: {
-        pk: { S: `CUSTOMERS#${customerId}` },
-        sk: { S: `CUSTOMERS#${customerId}` },
+        pk: { S: `CUSTOMER#${customerId}` },
+        sk: { S: `CUSTOMER#${customerId}` },
       },
     });
 
