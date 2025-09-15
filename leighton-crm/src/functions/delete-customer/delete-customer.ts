@@ -29,14 +29,14 @@ export const handler = async (
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers":
           "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Methods": "GET,POST,OPTIONS, DELETE",
       },
       body: JSON.stringify({
         message: `Customer ${customerId} deleted successfully`,
       }),
     };
   } catch (error) {
-    let errorMessage = "Unnown error";
+    let errorMessage = "Unknown error";
     if (error instanceof Error) {
       errorMessage = error.message;
     }
