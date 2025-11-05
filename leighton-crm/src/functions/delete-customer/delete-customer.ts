@@ -23,14 +23,18 @@ export const handler = async (
 
     await client.send(deleteCommand);
 
+    const ALLOW_ORIGIN = "*";
+
+    const baseHeaders = {
+      "Access-Control-Allow-Origin": ALLOW_ORIGIN,
+      "Access-Control-Allow-Headers": "Content-Type,Authorization",
+      "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE, PATCH",
+      "Content-Type": "application/json",
+    };
+
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers":
-          "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Methods": "GET,POST,OPTIONS, DELETE",
-      },
+      headers: baseHeaders,
       body: JSON.stringify({
         message: `Customer ${customerId} deleted successfully`,
       }),

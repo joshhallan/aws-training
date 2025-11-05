@@ -52,8 +52,18 @@ export const handler = async (
 
     console.log(errorMessage);
 
+    const ALLOW_ORIGIN = "*";
+
+    const baseHeaders = {
+      "Access-Control-Allow-Origin": ALLOW_ORIGIN,
+      "Access-Control-Allow-Headers": "Content-Type,Authorization",
+      "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE, PATCH",
+      "Content-Type": "application/json",
+    };
+
     return {
       statusCode: 500,
+      headers: baseHeaders,
       body: JSON.stringify({ error: errorMessage }),
     };
   }
